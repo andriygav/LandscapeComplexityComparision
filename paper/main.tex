@@ -422,28 +422,34 @@ Table~\ref{tab:compare-two} records the asymptotic orders. For two-layer $\mu_f$
 This numerical section focuses on the comparative behavior of $\mu_f$ and $\hat{\mathfrak{R}}_m$. It does not attempt a direct validation of the auxiliary sample-growth bound for $\mathcal{L}_{k+1}-\mathcal{L}_k$.
 The study evaluates $\mu_f(f\mid D)$ and the empirical Rademacher complexity~\eqref{eq:Rad-emp} in three controlled settings. These are: linear predictors with a sweep in ambient dimension~$n$; linear predictors with a sweep in sample size~$m$; and a two-layer FC ReLU with a sweep in hidden width~$h$ under entrywise bounds and planted worst-case data.
 
-\paragraph{Common details.}
 For each experiment, repeated draws of the data-generating process are averaged using independent seeds. Where appropriate, the mean together with one standard deviation is plotted as a shaded band.
 For $\mathcal{F}_{\mathrm{lin}}(W)$, the Rademacher supremum in~\eqref{eq:Rad-emp} reduces to the closed form behind~\eqref{eq:Rad-lin-exact}--\eqref{eq:Rad-lin-bound}. The expectation over $\boldsymbol{\sigma}$ is approximated by Monte Carlo with $4096$ draws.
 For the two-layer class, the supremum over $\boldsymbol{\theta}$ is approximated by projected gradient ascent on the entrywise ball, using the same $M$ as in the construction. Each estimate uses $n_{\sigma}$ Rademacher draws. The optimizer and iteration budget are listed in the notebook.
 
-\paragraph{Linear model, sweep in $n$ (fixed $m$).}
-Inputs are drawn from the synthetic linear dataset described in the code (Gaussian rows with randomized radii, scalar Gaussian noise on targets).
-The setup fixes $m=256$ and varies $n$ along an evenly spaced grid from $8$ to $128$ with 12 values. For each $(n,m)$, $\mu_f$ is computed from the rank-one Hessians $\mathbf{H}_i=\mathbf{x}_i\mathbf{x}_i^\top$ as in Subsection~\ref{subsec:linear-comp}, and $\hat{\mathfrak{R}}_m(\mathcal{F}_{\mathrm{lin}}(W))$ is computed with $W=2$.
+First experiment setup testing linear model, sweep in $n$ with fixed $m$.
+The setup fixes $m=256$ and varies $n$ along an evenly spaced grid from $8$ to $128$ with 12 values.
+For each $(n,m)$, $\mu_f$ is computed from the rank-one Hessians $\mathbf{H}_i=\mathbf{x}_i\mathbf{x}_i^\top$, and $\hat{\mathfrak{R}}_m(\mathcal{F}_{\mathrm{lin}}(W))$ is computed with $W=2$.
 The experiment uses $16$ random trials per~$n$.
-Figure~\ref{fig:exp01} uses two vertical axes on log scales. This keeps $\mu_f$ and $\hat{\mathfrak{R}}_m$ readable on the same plot. The figure shows that $\mu_f$ grows roughly linearly in~$n$, while $\hat{\mathfrak{R}}_m$ grows like $\sqrt{n}$ at fixed~$m$. This matches the contrast in Table~\ref{tab:compare-two}.
+Figure~\ref{fig:exp01} uses two vertical axes on log scales.
+This keeps $\mu_f$ and $\hat{\mathfrak{R}}_m$ readable on the same plot.
+The figure shows that $\mu_f$ grows roughly linearly in~$n$, while $\hat{\mathfrak{R}}_m$ grows like $\sqrt{n}$ at fixed~$m$.
+This matches the contrast in Table~\ref{tab:compare-two}.
 
 \begin{figure}[t]
 \centering
 \includegraphics[width=0.62\linewidth]{../figures/exp01_linear_sweep_n.png}
-\caption{Linear class: $\mu_f$ (left axis) and empirical $\hat{\mathfrak{R}}_m$ (right axis) versus ambient dimension~$n$ at fixed sample size $m=256$ and $W=2$. Shaded bands: mean $\pm$ std.\ over $16$ trials.}
+\caption{Linear class: $\mu_f$ (left axis) and empirical $\hat{\mathfrak{R}}_m$ (right axis) versus ambient dimension~$n$ at fixed sample size $m=256$ and $W=2$.}
 \label{fig:exp01}
 \end{figure}
 
-\paragraph{Linear model, sweep in $m$ (fixed $n$).}
+Next experiments about linear models, sweep in $m$ with fixed $n$.
 The setup fixes $n=64$ and varies $m$ on a geometric grid from $16$ to $1024$ with 14 values; targets use the same noise level as in the $n$-sweep.
 Again, the experiment uses $W=2$ and $16$ trials per~$m$.
-Figure~\ref{fig:exp02} shows the sweep in two panels. Panel~(a) plots $\mu_f$ versus~$m$. When the row norms of $\mathbf{x}_i$ stay stable as $m$ changes, $\mu_f$ also changes only weakly. This agrees with $\mu_f\le 2\max_i\|\mathbf{x}_i\|_2^2$ in~\eqref{eq:muf-lin-mu}. Panel~(b) plots $\hat{\mathfrak{R}}_m$ on log--log axes. It also shows a reference decay $\propto m^{-1/2}$, which illustrates the $m^{-1/2}$ factor in~\eqref{eq:Rad-lin-bound}.
+Figure~\ref{fig:exp02} shows the sweep in two panels.
+Panel~(a) plots $\mu_f$ versus~$m$.
+When the row norms of $\mathbf{x}_i$ stay stable as $m$ changes, $\mu_f$ also changes only weakly.
+This agrees with $\mu_f\le 2\max_i\|\mathbf{x}_i\|_2^2$ in~\eqref{eq:muf-lin-mu}. Panel~(b) plots $\hat{\mathfrak{R}}_m$ on log--log axes.
+It also shows a reference decay $\propto m^{-1/2}$, which illustrates the $m^{-1/2}$ factor in~\eqref{eq:Rad-lin-bound}.
 
 \begin{figure}[t]
 \centering
@@ -459,11 +465,11 @@ Figure~\ref{fig:exp02} shows the sweep in two panels. Panel~(a) plots $\mu_f$ ve
 \caption{$\hat{\mathfrak{R}}_m$ vs.\ $m$ (log--log).}
 \label{fig:exp02-rad}
 \end{subfigure}
-\caption{Linear class, sweep in sample size~$m$ at fixed $n=64$ and $W=2$. Shaded bands: mean $\pm$ std.\ over $16$ trials; (b)~includes a dashed $\propto m^{-1/2}$ reference.}
+\caption{Linear class, sweep in sample size~$m$ at fixed $n=64$ and $W=2$.}
 \label{fig:exp02}
 \end{figure}
 
-\paragraph{Two-layer FC ReLU, sweep in $h$.}
+Next experiments about two-layer FC ReLU, sweep in $h$.
 The experiment uses the entrywise-bounded aligned teacher and clustered inputs from the code. The input dimension is tied to the width, so $n=h$. The setup uses the entrywise weight bound $M=1$, the sample size $m=512$, and hidden widths $h\in\{4,8,12,16,24,32\}$.
 Evaluation is performed at the planted parameter $\boldsymbol{\theta}^\star$, so there is no label noise. As a result, the residual-aware discussion in Section~\ref{sec:compare} applies.
 The quantity $\mu_f$ is estimated with batched per-example Hessians, using chunk size $64$ in the implementation. The quantity $\hat{\mathfrak{R}}_m$ is estimated with entrywise PGD as in the notebook, with $n_{\sigma}=64$ PGD steps.
@@ -472,7 +478,7 @@ Figure~\ref{fig:exp03} overlays empirical $\mu_f$ with two reference curves alig
 \begin{figure}[t]
 \centering
 \includegraphics[width=0.62\linewidth]{../figures/exp03_twolayer_sweep_h.png}
-\caption{Two-layer FC ReLU (entrywise bound $M=1$, $n=h$, planted optimum): empirical $\mu_f$ (left axis, log) with worst-case $\propto(Mh)^4$ and residual-aware GN $\propto h^3$ references; empirical $\hat{\mathfrak{R}}_m$ (right axis, log). Mean over $3$ random trials per~$h$.}
+\caption{Two-layer FC ReLU: empirical $\mu_f$ (left axis, log) with worst-case $\propto(Mh)^4$ and residual-aware GN $\propto h^3$ references; empirical $\hat{\mathfrak{R}}_m$ (right axis, log).}
 \label{fig:exp03}
 \end{figure}
 
@@ -480,11 +486,11 @@ Figure~\ref{fig:exp03} overlays empirical $\mu_f$ with two reference curves alig
 
 Table~\ref{tab:compare-two} should be read as a comparison of two different notions of complexity. It should not be read as two upper bounds for the same phenomenon. Under the input-scaling assumptions of Subsection~\ref{subsec:linear-comp} and the norm assumptions of Lemma~\ref{lem:hess-mse}, the Landscape Complexity Measure reflects how strongly per-example Hessians vary around their empirical average at a fixed reference parameter. In the linear model, this gives an upper estimate that is \emph{linear} in the ambient dimension~$n$. In the worst-case two-layer ReLU regime, the same mechanism gives a \emph{quartic} upper estimate in the hidden width~$h$. The residual-aware part of Theorem~\ref{thm:landscape-mse} is also important. It shows that this worst-case picture is not the only one possible under squared loss. When residuals are small, the residual-weighted term in the per-example Hessian is suppressed. Then the Landscape Complexity Measure can scale more mildly. This refinement is local in nature and should be read in that same local sense throughout the comparison.
 
-Empirical Rademacher complexity plays a different role. The bounds in~\eqref{eq:Rad-lin-bound} and~\eqref{eq:Rad-nn-generic} keep the common $m^{-1/2}$ decay in sample size. This happens because they measure global capacity of the predictor class rather than local curvature at one parameter. The architecture-dependent factor changes instead. In the linear case, it is of order $\sqrt{n}$. In the two-layer case, it is $O(\mathrm{poly}(h))$ under standard norm constraints. This is the main conceptual contrast of the paper. The Landscape Complexity Measure is sensitive to local Hessian variability and therefore to the chosen loss, reference point, and residual regime. In contrast, $\hat{\mathfrak{R}}_m$ is tied to the size of the real-valued function class. The loss-specific simplification $\|\mathbf{A}_{\mathrm{sq}}\|_2=1$ versus $\|\mathbf{A}_{\mathrm{CE}}\|_2\le\sqrt{2}$ makes this distinction especially clear. Changing the loss directly changes the Hessian-based landscape quantity through $\|\mathbf{H}_i\|_2$ and the outer factor $\|\mathbf{A}\|_2$. The Rademacher term remains attached to the function class itself rather than to that outer block~\cite{kiselev2024hessian}.
+Empirical Rademacher complexity plays a different role. The bounds in~\eqref{eq:Rad-lin-bound} and~\eqref{eq:Rad-nn-generic} keep the common $m^{-1/2}$ decay in sample size. This happens because they measure global capacity of the predictor class rather than local curvature at one parameter. The architecture-dependent factor changes instead. In the linear case, it is of order $\sqrt{n}$. In the two-layer case, it is $O(\mathrm{poly}(h))$ under standard norm constraints. This is the main conceptual contrast of the paper. The Landscape Complexity Measure is sensitive to local Hessian variability and therefore to the chosen loss, reference point, and residual regime. In contrast, $\hat{\mathfrak{R}}_m$ is tied to the size of the real-valued function class. The loss-specific simplification $\|\mathbf{A}_{\mathrm{sq}}\|_2=1$ versus $\|\mathbf{A}_{\mathrm{CE}}\|_2\le\sqrt{2}$ makes this distinction especially clear. Changing the loss directly changes the Hessian-based landscape quantity through $\|\mathbf{H}_i\|_2$ and the outer factor $\|\mathbf{A}\|_2$.
 
 \section{Conclusion}\label{sec:conclusion}
 
-This paper develops the Landscape Complexity Measure for scalar regression with fully connected ReLU networks under squared loss. It studies this quantity in linear and two-layer settings. For bias-free, norm-bounded networks, the paper adapts prior fully connected Hessian bounds to the MSE regime. It also identifies the simplification $\|\mathbf{A}_{\mathrm{sq}}\|_2=1$ relative to the softmax case. This leads to scaling laws for the proposed measure in terms of depth, width, and norm constraints.
+This paper develops the Landscape Complexity Measure for scalar regression with fully connected ReLU networks under squared loss. It studies this quantity in linear and two-layer settings. For bias-free, norm-bounded networks, the paper adapts prior fully connected Hessian bounds to the MSE regime. This leads to scaling laws for the proposed measure in terms of depth, width, and norm constraints.
 
 The comparison with empirical Rademacher complexity shows that the two quantities are complementary rather than interchangeable. The numerical experiments are qualitatively consistent with this distinction and with the scaling trends derived in the theory.
 
@@ -547,7 +553,7 @@ H.~Li, Z.~Xu, G.~Taylor, C.~Studer, and T.~Goldstein.
 \bibitem{fort2019large}
 S.~Fort and S.~Jastrzebski.
 \newblock Large scale structure of neural network loss landscapes.
-\newblock In \emph{Advances in Neural Information Processing Systems}, volume~32, 2019.
+\newblock In \emph{Advances in Neural Information Processing Systems}, volume~32, pages 6709--6717, 2019.
 
 \bibitem{papyan2019hessian}
 V.~Papyan.
@@ -567,7 +573,7 @@ Z.~Xie, Q.-Y.~Tang, Y.~Cai, M.~Sun, and P.~Li.
 \bibitem{hochreiter1994}
 S.~Hochreiter and J.~Schmidhuber.
 \newblock Simplifying neural nets by discovering flat minima.
-\newblock In \emph{Advances in Neural Information Processing Systems}, volume~7, pages 661--671. MIT Press, 1995.
+\newblock In \emph{Proceedings of the 8th International Conference on Neural Information Processing Systems}, pages 529--536, 1995.
 
 \bibitem{neyshabur2017exploring}
 B.~Neyshabur, S.~Bhojanapalli, D.~McAllester, and N.~Srebro.
@@ -598,12 +604,12 @@ V.~Meshkov, N.~Kiselev, and A.~Grabovoy.
 \bibitem{jacot2018ntk}
 A.~Jacot, F.~Gabriel, and C.~Hongler.
 \newblock Neural tangent kernel: Convergence and generalization in neural networks.
-\newblock In \emph{Advances in Neural Information Processing Systems}, volume~31, 2018.
+\newblock In \emph{Proceedings of the 32nd International Conference on Neural Information Processing Systems}, pages 8580--8589, 2018.
 
 \bibitem{lee2018wide}
 J.~Lee, L.~Xiao, S.~S. Schoenholz, Y.~Bahri, R.~Novak, J.~Sohl-Dickstein, and J.~Pennington.
 \newblock Wide neural networks of any depth evolve as linear models under gradient descent.
-\newblock \emph{J.\ Stat.\ Mech.\ Theory Exp.}, 2020(12):124002, 2020.
+\newblock 33rd Conference on Neural Information Processing Systems, 2019.
 
 \bibitem{skorski2019chain}
 M.~Skorski.
