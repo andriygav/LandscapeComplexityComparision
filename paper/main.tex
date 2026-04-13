@@ -62,7 +62,7 @@ The results show how the Landscape Complexity Measure scales with depth, width, 
 The paper also identifies the simplification specific to squared loss relative to the softmax template. It summarizes the theoretical orders in a comparative table. It complements the analysis with controlled numerical experiments whose trends are qualitatively consistent with the theory \cite{kiselev2024hessian}.
 Overall, the paper develops the Landscape Complexity Measure as a regression-specific Hessian-dispersion quantity. It studies this quantity alongside classical uniform complexity for fully connected ReLU models \cite{bartlett2002,vapnik1998,kiselev2024hessian}.
 
-\section{Related work}\label{sec:related}
+\section{Related works}\label{sec:related}
 
 Research on neural loss landscapes has developed in several directions. Qualitative studies of nonconvex surfaces emphasize local minima, saddle structure, and basin geometry \cite{choromanska2015,fort2019emergent}. Visualization-based work studies low-dimensional views of high-dimensional objectives \cite{li2018visualizing,fort2019large}. A more quantitative line focuses on Hessian spectra and curvature structure. Empirical studies often observe a bulk of near-zero eigenvalues together with a smaller set of dominant directions \cite{ghorbani2019,sagun2018,papyan2019hessian,wu2022dissecting}. Random-matrix and scaling perspectives relate such patterns to width, data randomness, and model size \cite{pennington2017,xie2022powerlaw}. Connections between geometry and generalization are also discussed through flat-versus-sharp minima and related stability viewpoints \cite{hochreiter1994,neyshabur2017exploring,dinh2017sharp}. For the present paper, this literature provides the geometric background. However, it does not by itself yield a single local complexity quantity tailored to squared-loss regression.
 
@@ -250,8 +250,7 @@ The landscape complexity measure~\eqref{eq:muf} is then governed by the dispersi
 Consider one hidden layer of width $h$: $\mathbb{R}^{n}\to\mathbb{R}^{h}\to\mathbb{R}$ with ReLU and bias-free weight matrices satisfying the same spectral bounds as in Lemma~\ref{lem:hess-mse}.
 In the notation of Corollary~\ref{cor:muf}, this is the case $L=2$, so~\eqref{eq:muf-scale} yields the upper bound $\mu_f(f\mid D)=O((hM)^{4})$, in contrast to deeper networks where the factor $(hM)^{2L}$ grows faster in $L$.
 Separately, if at a reference $\boldsymbol{\theta}^\star$ the pointwise residuals are uniformly small,
-$\bigl|f_{\boldsymbol{\theta}^\star}(\mathbf{x}_i)-y_i\bigr|\le\varepsilon_y$ for all~$i$, then the residual-aware part of Theorem~\ref{thm:landscape-mse} and its exact identity~\eqref{eq:interp-hessian} yield the bound~\eqref{eq:muf-interp-general} on $\mu_f(f\mid D)$; under entrywise bounds this refines the worst-case $O(h^4)$ estimate (see Subsection~\ref{subsec:two-layer-comp}).
-The numerical two-layer sweeps in Section~\ref{sec:experiments} instantiate this residual-aware regime (e.g.\ planted targets with small or zero label noise at~$\boldsymbol{\theta}^\star$).
+$\bigl|f_{\boldsymbol{\theta}^\star}(\mathbf{x}_i)-y_i\bigr|\le\varepsilon_y$ for all~$i$, then the residual-aware part of Theorem~\ref{thm:landscape-mse} and its exact identity~\eqref{eq:interp-hessian} yield the bound~\eqref{eq:muf-interp-general} on $\mu_f(f\mid D)$; under entrywise bounds this refines the worst-case $O(h^4)$.
 \end{corollary}
 
 \noindent
@@ -283,9 +282,7 @@ Given $D$, the \emph{empirical Rademacher complexity} is
     \frac{1}{m}\sum_{i=1}^{m}\sigma_i\, f(\mathbf{x}_i)
   \right],
 \end{equation}
-where $\sigma_1,\ldots,\sigma_m$ are i.i.d.\ Rademacher variables with $\mathbb{P}(\sigma_i=\pm 1)=1/2$.
-The expectation $\mathbb{E}_{\boldsymbol{\sigma}}$ is conditional on the fixed sample~$D$.
-The population Rademacher complexity is $\mathfrak{R}_m(\mathcal{F}):=\mathbb{E}_D\bigl[\hat{\mathfrak{R}}_m(\mathcal{F})\bigr]$~\cite{bartlett2002}.
+where $\sigma_1,\ldots,\sigma_m$ are i.i.d.\ Rademacher variables.
 \end{definition}
 \noindent
 Below, $\mathcal{F}$ denotes the class of real-valued predictors $f_{\boldsymbol{\theta}}$ for each architecture; the comparison is between $\hat{\mathfrak{R}}_m(\mathcal{F})$ and $\mu_f(f\mid D)$ built from Hessians of the same maps at a reference~$\boldsymbol{\theta}^*$.
@@ -341,18 +338,16 @@ Thus
   \le 2\max_{1\le i\le m}\|\mathbf{x}_i\|_2^2
 \end{equation}
 for this linear model; the same averaging argument underlies Corollary~\ref{cor:muf}.
-\textbf{Asymptotics in $n$.}
 If $\|\mathbf{x}_i\|_2^2=\Theta(n)$ as $n\to\infty$, then~\eqref{eq:muf-lin-mu} implies the upper estimate $\mu_f(f\mid D)=O(n)$ up to the max over $i$.
 
-Under the same input scaling, $\mu_f$ admits the upper estimate $O(n)$ by~\eqref{eq:muf-lin-mu}, while $\hat{\mathfrak{R}}_m$ in~\eqref{eq:Rad-lin-bound} is bounded by a quantity of order $W\sqrt{n/m}$; uniform bounds for the real-valued class also admit linear-in-$n$ complexity through pseudo-dimension/covering routes~\cite{bartlett2002,vapnik1998}.
+Under the same input scaling, $\mu_f$ admits the upper estimate $O(n)$ by~\eqref{eq:muf-lin-mu}, while $\hat{\mathfrak{R}}_m$ in~\eqref{eq:Rad-lin-bound} is bounded by a quantity of order $W\sqrt{n/m}$.
 
 \subsection{Two-layer fully connected ReLU network}\label{subsec:two-layer-comp}
 
 A nonlinear class with one hidden layer is considered next. This matches Corollary~\ref{cor:shallow} and Lemma~\ref{lem:hess-mse} at depth $L=2$.
 The upper scaling estimate $\mu_f=O((hM)^4)$ from~\eqref{eq:muf-scale} already differs sharply from the linear case. The natural question is how it compares to norm-based Rademacher estimates, which grow polynomially in~$h$ but also contain a $m^{-1/2}$ factor.
 
-Consider one hidden layer of width $h$:
-$\mathbb{R}^{n}\xrightarrow{\mathbf{W}^{(1)}}\mathbb{R}^{h}\xrightarrow{\sigma}\mathbb{R}^{h}\xrightarrow{\mathbf{w}^{(2)}}\mathbb{R}$ with $\sigma=\mathrm{ReLU}$, bias-free weights, and
+Consider one hidden layer of width $h$, with $\sigma=\mathrm{ReLU}$, bias-free weights, and
 $f_{\boldsymbol{\theta}}(\mathbf{x})=\mathbf{w}^{(2)\top}\sigma\bigl(\mathbf{W}^{(1)}\mathbf{x}\bigr)$.
 In the notation of Section~\ref{sec:landscape}, this is depth $L=2$ in Lemma~\ref{lem:hess-mse}.
 
@@ -374,12 +369,11 @@ Thus the Rademacher term is $O(m^{-1/2})$ in sample size and, for fixed $M$ and 
 Uniform bounds based on covering numbers or fat-shattering for piecewise-linear networks also scale with parameter count and depth~\cite{bartlett2002,harvey2019jmlr}; these bounds are not developed here, and~\eqref{eq:Rad-nn-generic} is kept as the main classical counterpart to~$\mu_f$.
 
 For the Landscape Complexity Measure, Corollary~\ref{cor:shallow} and~\eqref{eq:muf-scale} with $L=2$ give the upper bound $\mu_f(f\mid D)=O((hM)^{4})$.
-\textbf{Asymptotics in $h$.}
 For fixed $M$, this yields the worst-case estimate $\mu_f=O(h^4)$ as $h\to\infty$, whereas the Rademacher upper bound above is $O(\mathrm{poly}(h)/\sqrt{m})$ with a lower degree in $h$ under typical norm constraints.
 
 The rate $O(h^4)$ is a \emph{uniform worst-case} consequence of Lemma~\ref{lem:hess-mse} and does not exploit the special structure of the squared loss in a small-residual regime.
 When the residuals satisfy $|f_{\boldsymbol{\theta}^*}(\mathbf{x}_i)-y_i|\le \varepsilon_y$, the second term in the decomposition~\eqref{eq:hess-mse-decomp} is controlled by~$\varepsilon_y$ and the refinement in Theorem~\ref{thm:landscape-mse} applies.
-For a two-layer network with $|W_{jk}^{(1)\star}|\le M$ and $|w_j^{(2)\star}|\le M$,
+For a two-layer network with $|w_{ij}|\le M$,
 \[
   \left\|\nabla_{\boldsymbol{\theta}}f_{\boldsymbol{\theta}^*}(\mathbf{x}_i)\right\|_2^2
   = \sum_{j=1}^{h}\sigma\!\bigl((\mathbf{w}^{(1)\star}_j)^{\top}\mathbf{x}_i\bigr)^2
@@ -403,7 +397,7 @@ Table~\ref{tab:compare-two} collects the worst-case growth orders for $\mu_f$ an
 
 \begin{table}[t]
 \centering
-\caption{Theoretical upper-order scaling of $\mu_f$ and empirical Rademacher complexity for the linear model and the two-layer FC ReLU under squared loss (Subsections~\ref{subsec:linear-comp}--\ref{subsec:two-layer-comp}). For two-layer $\mu_f$, worst-case spectral bounds contrast with the residual-aware estimate from Theorem~\ref{thm:landscape-mse}; the latter comes from the local residual-aware analysis around~$\boldsymbol{\theta}^*$.}
+\caption{Theoretical upper-order scaling of $\mu_f$ and empirical Rademacher complexity for the linear model and the two-layer FC ReLU under squared loss. For two-layer $\mu_f$, worst-case spectral bounds contrast with the residual-aware estimate from Theorem~\ref{thm:landscape-mse}; the latter comes from the local residual-aware analysis around~$\boldsymbol{\theta}^*$.}
 \label{tab:compare-two}
 \small
 \setlength{\tabcolsep}{5pt}
@@ -412,12 +406,12 @@ Table~\ref{tab:compare-two} collects the worst-case growth orders for $\mu_f$ an
  & Linear & Two-layer FC ReLU \\
 \midrule
 $\mu_f(f\mid D)$ &
-$\le 2\max_i\|\mathbf{x}_i\|_2^2$ by~\eqref{eq:muf-lin-mu}; $O(n)$ when $\|\mathbf{x}_i\|_2^2=\Theta(n)$ &
-worst-case: $O((hM)^4)$ (Cor.~\ref{cor:shallow}, \eqref{eq:muf-scale}, $L{=}2$). Residual-aware: if $|f_{\boldsymbol{\theta}^*}(\mathbf{x}_i)-y_i|\le\varepsilon_y$, then~\eqref{eq:muf-interp-general}; under entrywise bounds, e.g.\ $O(hM^2n^2+\varepsilon_y M_{\nabla^2 f})$ (Subsection~\ref{subsec:two-layer-comp}) \\
+$O(n)$&
+$O((hM)^4)$ in worst-case, and $O(hM^2n^2+\varepsilon_y M_{\nabla^2 f})$ in residual-aware \\
 \addlinespace[0.35em]
 $\hat{\mathfrak{R}}_m$ &
-$O(W\sqrt{n/m})$ under comparable coordinates,~\eqref{eq:Rad-lin-bound} &
-$O(m^{-1/2})$ in $m$ and $O(\mathrm{poly}(h)/\sqrt{m})$ in width under~\eqref{eq:Rad-nn-generic} \\
+$O(W\sqrt{n/m})$ &
+$O(\mathrm{poly}(h)/\sqrt{m})$ \\
 \bottomrule
 \end{tabular}
 \end{table}
