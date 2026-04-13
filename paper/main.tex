@@ -427,7 +427,6 @@ $O(m^{-1/2})$ in $m$ and $O(\mathrm{poly}(h)/\sqrt{m})$ in width under~\eqref{eq
 Table~\ref{tab:compare-two} records the asymptotic orders. For two-layer $\mu_f$, it includes both the worst-case and residual-aware cases.
 This numerical section focuses on the comparative behavior of $\mu_f$ and $\hat{\mathfrak{R}}_m$. It does not attempt a direct validation of the auxiliary sample-growth bound for $\mathcal{L}_{k+1}-\mathcal{L}_k$.
 The study evaluates $\mu_f(f\mid D)$ and the empirical Rademacher complexity~\eqref{eq:Rad-emp} in three controlled settings. These are: linear predictors with a sweep in ambient dimension~$n$; linear predictors with a sweep in sample size~$m$; and a two-layer FC ReLU with a sweep in hidden width~$h$ under entrywise bounds and planted worst-case data.
-The implementations are in the accompanying notebooks \texttt{code/exp01\_linear\_sweep\_n.ipynb}, \texttt{code/exp02\_linear\_sweep\_m.ipynb}, and \texttt{code/exp03\_twolayer\_sweep\_h.ipynb}. The figures are saved under \texttt{figures/}.
 
 \paragraph{Common details.}
 For each experiment, repeated draws of the data-generating process are averaged using independent seeds. Where appropriate, the mean together with one standard deviation is plotted as a shaded band.
@@ -471,7 +470,7 @@ Figure~\ref{fig:exp02} shows the sweep in two panels. Panel~(a) plots $\mu_f$ ve
 \end{figure}
 
 \paragraph{Two-layer FC ReLU, sweep in $h$.}
-The experiment uses the entrywise-bounded aligned teacher and clustered inputs from the code (\texttt{make\_synthetic\_twolayer\_worstcase\_in\_ball}). The input dimension is tied to the width, so $n=h$. The setup uses the entrywise weight bound $M=1$, the sample size $m=512$, and hidden widths $h\in\{4,8,12,16,24,32\}$.
+The experiment uses the entrywise-bounded aligned teacher and clustered inputs from the code. The input dimension is tied to the width, so $n=h$. The setup uses the entrywise weight bound $M=1$, the sample size $m=512$, and hidden widths $h\in\{4,8,12,16,24,32\}$.
 Evaluation is performed at the planted parameter $\boldsymbol{\theta}^\star$, so there is no label noise. As a result, the residual-aware discussion in Section~\ref{sec:compare} applies.
 The quantity $\mu_f$ is estimated with batched per-example Hessians, using chunk size $64$ in the implementation. The quantity $\hat{\mathfrak{R}}_m$ is estimated with entrywise PGD as in the notebook, with $n_{\sigma}=64$ PGD steps.
 Figure~\ref{fig:exp03} overlays empirical $\mu_f$ with two reference curves aligned at the smallest~$h$. One is the worst-case spectral scaling $\propto (Mh)^4$. The other is the residual-aware Gauss--Newton scaling $\propto h^3$ for $n=h$ from Subsection~\ref{subsec:two-layer-comp}. The figure also shows $\hat{\mathfrak{R}}_m$ on a second log axis so that its scale is not compressed by the larger values of~$\mu_f$.
