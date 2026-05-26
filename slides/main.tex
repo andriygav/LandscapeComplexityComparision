@@ -24,6 +24,8 @@
 \usepackage{comment}
 \usepackage{multicol}
 \usepackage{color}
+\usepackage{graphicx}
+\usepackage{booktabs}
 \definecolor{python-green}{RGB}{55,126,33}
 
 \usepackage[all]{xy}
@@ -35,11 +37,12 @@
 \captionsetup{skip=0pt,belowskip=0pt}
 
 \newtheorem{rustheorem}{Теорема}
+\newtheorem{ruslemma}{Лемма}
+\newtheorem{russtatement}{Утверждение}
 \newtheorem{rusdefinition}{Определение}
 \newtheorem{rusassumption}{Предположение}
 \newtheorem{rusremark}{Замечание}
 \newtheorem{ruscorollary}{Следствие}
-
 
 % colors
 \definecolor{darkgreen}{rgb}{0.0, 0.2, 0.13}
@@ -49,17 +52,17 @@
 
 %----------------------------------------------------------------------------------------------------------
 
-\title[]{%
-О показателе ландшафтной сложности для полносвязных сетей ReLU при квадратичной функции потерь}
+\title[Ландшафтная мера сложности]{%
+О ландшафтной мере сложности для полносвязных сетей ReLU при квадратичной функции потерь}
 
 \author{%
     Андрей Грабовой}
-    
+
 \institute[ИПУ РАН]{%
 Институт Проблем Управления РАН им. Трапезникова\\
 grabovoy@ipu.ru}
 
-\date{29.05.2026}%Place If need date hear
+\date{29.05.2026}
 
 %---------------------------------------------------------------------------------------------------------
 \begin{document}
@@ -69,18 +72,365 @@ grabovoy@ipu.ru}
 \end{frame}
 
 %----------------------------------------------------------------------------------------------------------
-\begin{frame}{Мера сложности ландшафта для полносвязных ReLU сетей}
-\bigskip
-Исследуется связь между локальной геометрией функции потерь и классическими мерами ёмкости в задачах регрессии.
+\begin{frame}{Ландшафтная мера сложности для полносвязных ReLU сетей}
+\justifying
+Исследуется связь между локальной геометрией функции потерь и классическими мерами емкости в задачах регрессии.
+
 \begin{block}{Задача}
+\justifying
 Анализ ландшафта функции потерь и его соотношения с равномерной сложностью для скалярной регрессии полносвязных ReLU сетей при квадратичной ошибке.
 \end{block}
+
 \begin{block}{Цель}
-Разработать меру сложности ландшафта (Landscape Complexity Measure), отражающую локальную вариативность Гессиана вокруг эмпирического среднего, и исследовать её масштабирование.
+\justifying
+Разработать ландшафтную меру сложности, отражающую локальную вариативность Гессиана вокруг эмпирического среднего, и исследовать ее масштабирование.
 \end{block}
+
 \begin{block}{Метод}
-Определение меры через спектральную дисперсию поэкземплярных Гессианов; вывод законов масштабирования по глубине, ширине и ограничениям нормы; теоретическое сравнение с эмпирической сложностью Радемахера; численная верификация.
+\justifying
+Определение ландшафтной меры сложности через спектральную дисперсию поэкземплярных Гессианов, вывод законов масштабирования по глубине, ширине и ограничениям нормы, теоретическое сравнение с эмпирической сложностью Радемахера; численная верификация.
 \end{block}
 \end{frame}
+
+%----------------------------------------------------------------------------------------------------------
+\begin{frame}{Постановка задачи}
+\justifying
+Заданы
+\begin{enumerate}[1)]
+    \item выборка $D=\{(\mathbf{x}_i,y_i)\}_{i=1}^{m}$, $\mathbf{x}_i\in\mathbb{R}^n$, $y_i\in\mathbb{R}$;
+    \item $L$-слойная bias-free полносвязная сеть с активацией ReLU,
+    \[
+    f_{\boldsymbol{\theta}}(\mathbf{x})
+    =\mathbf{W}^{(L)}\sigma\bigl(\cdots\sigma(\mathbf{W}^{(1)}\mathbf{x})\bigr),
+    \qquad \boldsymbol{\theta}\in\mathbb{R}^P;
+    \]
+    \item поэкземплярная ошибка и риск на первых $k$ объектах:
+    \[
+    \ell_i(\boldsymbol{\theta})
+    = \tfrac{1}{2}\bigl(f_{\boldsymbol{\theta}}(\mathbf{x}_i)-y_i\bigr)^2,
+    \qquad
+    \mathcal{L}_k(\boldsymbol{\theta})
+    = \frac{1}{k}\sum_{i=1}^{k}\ell_i(\boldsymbol{\theta}),
+    \quad k=1,\ldots,m .
+    \]
+\end{enumerate}
+Поэкземплярный гессиан:
+\[
+\mathbf{H}_i(\boldsymbol{\theta})
+=\nabla^2_{\boldsymbol{\theta}}\ell\bigl(f_{\boldsymbol{\theta}}(\mathbf{x}_i),y_i\bigr).
+\]
+Ограничения: $\|\mathbf{W}^{(p)}\|_2\le M_{\mathbf{W}}$, $\|\mathbf{x}_i\|_2\le M_{\mathbf{x}}$; опорная точка $\boldsymbol{\theta}^*$.
+
+Сопоставляются ландшафтная мера $\mu_f(f\mid D)$ в $\boldsymbol{\theta}^*$ и $\hat{\mathfrak{R}}_m(\mathcal{F})$ на выборке $D$.
+\end{frame}
+
+%----------------------------------------------------------------------------------------------------------
+\begin{frame}{Ландшафтная мера сложности}
+\justifying
+Пусть
+\[
+\setlength\abovedisplayskip{1pt}
+\setlength\belowdisplayskip{1pt}
+\mathbf{H}^{(k)}(\boldsymbol{\theta})
+=\frac{1}{k}\sum_{i=1}^{k}\mathbf{H}_i(\boldsymbol{\theta}),
+\qquad
+\bar{\mathbf{H}}(\boldsymbol{\theta})
+=\frac{1}{m}\sum_{i=1}^{m}\mathbf{H}_i(\boldsymbol{\theta}) .
+\]
+
+\begin{rusdefinition}
+\emph{Ландшафтная мера сложности} на $D$ в точке $\boldsymbol{\theta}^*$:
+\[
+\setlength\abovedisplayskip{1pt}
+\setlength\belowdisplayskip{1pt}
+\mu_f(f\mid D)
+=\frac{1}{m}\sum_{i=1}^{m}
+\left\|
+\mathbf{H}_{i}(\boldsymbol{\theta}^*)
+-\bar{\mathbf{H}}(\boldsymbol{\theta}^*)
+\right\|_2
+=\mathsf{E}_{i\in D}\left\|
+\mathbf{H}_{i}(\boldsymbol{\theta}^*)
+-\bar{\mathbf{H}}(\boldsymbol{\theta}^*)
+\right\|_2 .
+\]
+\end{rusdefinition}
+
+$\mu_f$ описывает типичный разброс $\mathbf{H}_i$ относительно $\bar{\mathbf{H}}$ в спектральной норме.
+Для ReLU $\mathbf{H}_i$ задан при фиксированном паттерне активаций.
+\end{frame}
+
+%----------------------------------------------------------------------------------------------------------
+\begin{frame}{Приращение риска при добавлении объекта}
+\justifying
+Пусть $\bar{\ell}_k(\boldsymbol{\theta}^*)=\frac{1}{k}\sum_{i=1}^{k}\ell_i(\boldsymbol{\theta}^*)$ и
+\[
+\bigl\|\nabla\mathcal{L}_k(\boldsymbol{\theta}^*)\bigr\|_2\le\varepsilon_g,
+\qquad
+\bigl\|\nabla\mathcal{L}_{k+1}(\boldsymbol{\theta}^*)\bigr\|_2\le\varepsilon_g .
+\]
+
+Локальная оценка второго порядка:
+\begin{russtatement}
+\[
+\setlength\abovedisplayskip{2pt}
+\setlength\belowdisplayskip{2pt}
+\begin{aligned}
+  \bigl|\mathcal{L}_{k+1}(\boldsymbol{\theta})-\mathcal{L}_k(\boldsymbol{\theta})\bigr|
+  &\le \frac{1}{k+1}\Bigl|\ell_{k+1}(\boldsymbol{\theta}^*)-\bar{\ell}_k(\boldsymbol{\theta}^*)\Bigr| \\
+  &\quad + \frac{\|\boldsymbol{\theta}-\boldsymbol{\theta}^*\|_2^2}{k+1}
+    \left\| \mathbf{H}_{k+1}(\boldsymbol{\theta}^*)-\mathbf{H}^{(k)}(\boldsymbol{\theta}^*) \right\|_2 \\
+  &\quad + 2\varepsilon_g\|\boldsymbol{\theta}-\boldsymbol{\theta}^*\|_2 .
+\end{aligned}
+\]
+\end{russtatement}
+
+Квадратичное слагаемое связывает рост выборки с разбросом $\mathbf{H}_i$; отсюда оценка $\mu_f$.
+Это приближённая оценка из локального разложения, не точное тождество.
+\end{frame}
+
+%----------------------------------------------------------------------------------------------------------
+\begin{frame}{Гессиан при среднеквадратичной ошибке}
+\justifying
+Пусть $u_i=f_{\boldsymbol{\theta}}(\mathbf{x}_i)$, $\ell(u,y)=\tfrac12(u-y)^2$. Тогда
+\[
+\setlength\abovedisplayskip{2pt}
+\setlength\belowdisplayskip{2pt}
+\mathbf{H}_i(\boldsymbol{\theta})
+=\nabla_{\boldsymbol{\theta}}u_i\,\nabla_{\boldsymbol{\theta}}u_i^{\top}
++(u_i-y_i)\,\nabla_{\boldsymbol{\theta}}^2 u_i .
+\]
+При среднеквадратичной ошибке $\partial^2\ell/\partial u^2=1$; для cross-entropy внешний множитель $\le\sqrt{2}$.
+
+\medskip
+Из разложения следует
+\[
+\|\mathbf{H}_i(\boldsymbol{\theta})\|_2
+\le \|\nabla_{\boldsymbol{\theta}}u_i\|_2^2
++|u_i-y_i|\,\|\nabla_{\boldsymbol{\theta}}^2 u_i\|_2 .
+\]
+
+\begin{ruslemma}
+Для bias-free FC ReLU при $\|\mathbf{W}^{(p)}\|_2\le M_{\mathbf{W}}$ и $\|\mathbf{x}_i\|_2\le M_{\mathbf{x}}$:
+\[
+\|\mathbf{H}_i(\boldsymbol{\theta})\|_2
+\le M_{\mathbf{H}}
+:= L M_{\mathbf{x}}^2 M_{\mathbf{W}}^{2L}
++\sum_{s=1}^{L} M_{\mathbf{W}}^{2s}.
+\]
+При $|w_{ij}^{(p)}|\le M$ на блоках $h\times h$:
+$\|\mathbf{H}_i(\boldsymbol{\theta})\|_2=O\!\bigl(L(hM)^{2L}\bigr)$.
+\end{ruslemma}
+\end{frame}
+
+%----------------------------------------------------------------------------------------------------------
+\begin{frame}[t]{Теорема о приращении риска}
+\justifying
+\setlength\abovedisplayskip{0pt}
+\setlength\belowdisplayskip{0pt}
+\setlength\abovedisplayshortskip{0pt}
+\setlength\belowdisplayshortskip{0pt}
+\vspace{-0.6em}
+Пусть $\|\boldsymbol{\theta}-\boldsymbol{\theta}^*\|_2\le R$, $|\ell_i(\boldsymbol{\theta}^*)|\le M_\ell$ для всех $i$,
+в $\boldsymbol{\theta}^*$ выполнена лемма о $\|\mathbf{H}_i\|_2$ и
+$\bigl\|\nabla\mathcal{L}_k(\boldsymbol{\theta}^*)\bigr\|_2,
+\bigl\|\nabla\mathcal{L}_{k+1}(\boldsymbol{\theta}^*)\bigr\|_2\le\varepsilon_g$.
+
+\vspace{-0.35em}
+\begin{rustheorem}
+\vspace{-0.25em}
+При локальной оценке второго порядка:
+\[
+\begin{aligned}
+  \bigl|\mathcal{L}_{k+1}(\boldsymbol{\theta})-\mathcal{L}_k(\boldsymbol{\theta})\bigr|
+  &\le \frac{2}{k+1}\bigl(M_\ell+M_{\mathbf{H}}R^2\bigr)+2\varepsilon_g R,\\
+  \bigl|\mathcal{L}_{k+1}(\boldsymbol{\theta})-\mathcal{L}_k(\boldsymbol{\theta})\bigr|
+  &=O\!\left(\frac{L(hM)^{2L}R^2}{k}\right).
+\end{aligned}
+\]
+\vspace{-0.35em}
+\end{rustheorem}
+
+\vspace{-0.35em}
+При $|f_{\boldsymbol{\theta}^*}(\mathbf{x}_i)-y_i|\le\varepsilon_y$ и фиксированном паттерне активаций на $D$:
+$\mathbf{g}_i:=\nabla_{\boldsymbol{\theta}}f_{\boldsymbol{\theta}^*}(\mathbf{x}_i)$,
+$M_{\nabla^2 f}:=\max_{1\le i\le m}\bigl\|\nabla_{\boldsymbol{\theta}}^2 f_{\boldsymbol{\theta}^*}(\mathbf{x}_i)\bigr\|_2$.
+\[
+\begin{aligned}
+  \mu_f(f\mid D)
+  &\le 2\max_{1\le i\le m}\|\mathbf{g}_i\|_2^2+2\varepsilon_y M_{\nabla^2 f},\\
+  \bigl|\mathcal{L}_{k+1}(\boldsymbol{\theta})-\mathcal{L}_k(\boldsymbol{\theta})\bigr|
+  &\le \frac{\varepsilon_y^2+2R^2\bigl(\max_i\|\mathbf{g}_i\|_2^2+\varepsilon_y M_{\nabla^2 f}\bigr)}{k+1}
+    +2\varepsilon_g R .
+\end{aligned}
+\]
+
+\vfill
+\textit{При добавлении одного объекта к выборке теорема оценивает изменение эмпирического риска $\mathcal{L}_k$ в окрестности $\boldsymbol{\theta}^*$: главный вклад кривизны даёт порядок $O(1/k)$ и связан с разбросом поэкземплярных Гессианов, то есть с $\mu_f$; член с $\varepsilon_g$ не исчезает при малом градиенте. При малых невязках уточнение ослабляет наихудшую оценку $\mu_f$ и приращения риска.}
+\end{frame}
+
+%----------------------------------------------------------------------------------------------------------
+\begin{frame}[t]{Масштабирование ландшафтной меры сложности}
+\justifying
+\setlength\abovedisplayskip{0pt}
+\setlength\belowdisplayskip{0pt}
+\setlength\abovedisplayshortskip{0pt}
+\setlength\belowdisplayshortskip{0pt}
+\vspace{-0.5em}
+Из леммы о $\|\mathbf{H}_i\|_2$ и определения $\mu_f$ следуют верхние порядки по глубине $L$, ширине $h$ и ограничениям на веса.
+
+\vspace{-0.3em}
+\begin{ruscorollary}
+При условиях леммы, $|w_{ij}^{(p)}|\le M$ на блоках $h\times h$ и фиксированной норме входов:
+\[
+\mu_f(f\mid D)=O\!\bigl(L(hM)^{2L}\bigr).
+\]
+\end{ruscorollary}
+
+\vspace{-0.35em}
+\begin{ruscorollary}[Линейная модель]
+Пусть $f_{\boldsymbol{\theta}}(\mathbf{x})=\mathbf{w}^{\top}\mathbf{x}$, $\boldsymbol{\theta}=\mathbf{w}\in\mathbb{R}^n$. Тогда
+$\mathbf{H}_i(\boldsymbol{\theta})=\mathbf{x}_i\mathbf{x}_i^{\top}$ и
+\[
+\mu_f(f\mid D)\le 2\max_{1\le i\le m}\|\mathbf{x}_i\|_2^2.
+\]
+Если $\|\mathbf{x}_i\|_2^2=\Theta(n)$ при $n\to\infty$, то $\mu_f(f\mid D)=O(n)$.
+\end{ruscorollary}
+
+\vspace{-0.35em}
+\begin{ruscorollary}[Один скрытый слой]
+Для FC ReLU с одним скрытым слоем ширины $h$ имеем $L=2$ и
+$\mu_f(f\mid D)=O\!\bigl((hM)^4\bigr)$.
+При $|f_{\boldsymbol{\theta}^*}(\mathbf{x}_i)-y_i|\le\varepsilon_y$ и условиях теоремы о приращении риска:
+\[
+\mu_f(f\mid D)
+\le 2hM^2\max_{1\le i\le m}\bigl(\|\mathbf{x}_i\|_1^2+\|\mathbf{x}_i\|_2^2\bigr)
++2\varepsilon_y M_{\nabla^2 f}.
+\]
+Если $\|\mathbf{x}_i\|_2^2=\Theta(n)$ и $\|\mathbf{x}_i\|_1=\Theta(n)$, то
+$\mu_f(f\mid D)=O\!\bigl(hM^2n^2+\varepsilon_y M_{\nabla^2 f}\bigr)$.
+\end{ruscorollary}
+
+\vfill
+\textit{Порядок $(hM)^4$ --- наихудшая спектральная оценка; при малых невязках и среднеквадратичной ошибке масштаб $\mu_f$ может быть мягче.}
+\end{frame}
+
+%----------------------------------------------------------------------------------------------------------
+\begin{frame}[t]{Сравнение порядков роста}
+\justifying
+\setlength\abovedisplayskip{0pt}
+\setlength\belowdisplayskip{0pt}
+\vspace{-0.4em}
+Порядки $\mu_f$ заданы на предыдущем слайде.
+Здесь --- сопоставление с эмпирической сложностью Радемахера $\hat{\mathfrak{R}}_m(\mathcal{F})$ при той же архитектуре и среднеквадратичной ошибке.
+$\mu_f$ отвечает за локальный разброс Гессианов в $\boldsymbol{\theta}^*$.
+$\hat{\mathfrak{R}}_m$ --- за глобальную емкость класса $\mathcal{F}$ на $D$.
+
+\vspace{0.15em}
+\begin{table}
+\centering
+\setlength{\tabcolsep}{6pt}
+\begin{tabular}{@{}lcc@{}}
+\toprule
+ & Линейная модель & Два слоя FC ReLU \\
+\midrule
+$\mu_f(f\mid D)$ & $O(n)$ & $O((hM)^4)$ или $O(hM^2n^2)$ \\
+\addlinespace[0.2em]
+$\hat{\mathfrak{R}}_m(\mathcal{F})$ &
+$O(W\sqrt{n/m})$ &
+$O(\mathrm{poly}(h)/\sqrt{m})$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\vspace{0.15em}
+Линейный класс $\mathcal{F}_{\mathrm{lin}}(W)=\{\mathbf{x}\mapsto\mathbf{w}^{\top}\mathbf{x}\mid\|\mathbf{w}\|_2\le W\}$.
+\[
+\hat{\mathfrak{R}}_m(\mathcal{F}_{\mathrm{lin}}(W))
+=\frac{W}{m}\mathbb{E}_{\boldsymbol{\sigma}}\left\|
+\sum_{i=1}^{m}\sigma_i\mathbf{x}_i\right\|_2
+\le \frac{W r}{\sqrt{m}} .
+\]
+При $\|\mathbf{x}_i\|_2\le r$ и фиксированном $m$ контраст такой: $\mu_f$ линейна по $n$, а $\hat{\mathfrak{R}}_m$ --- порядка $\sqrt{n}$.
+
+Для двухслойной FC ReLU в $\hat{\mathfrak{R}}_m$ остаётся множитель $m^{-1/2}$, рост по $h$ --- полиномиальный и обычно мягче, чем наихудший порядок $\mu_f$ по $h$.
+
+\vfill
+\textit{Две меры дополняют друг друга. Это не два верхних предела для одного явления.}
+\end{frame}
+
+%----------------------------------------------------------------------------------------------------------
+\begin{frame}[t]{Линейная модель, размерность $n$}
+\justifying
+\vspace{-0.3em}
+\begin{enumerate}[1)]
+    \item $m=256$, сетка $n\in[8,128]$, 12 значений, $W=2$, 16 повторов.
+    \item $\mu_f$ из $\mathbf{H}_i=\mathbf{x}_i\mathbf{x}_i^{\top}$.
+    \item $\hat{\mathfrak{R}}_m$ по точной формуле, $4096$ прогонов Монте-Карло по $\boldsymbol{\sigma}$.
+\end{enumerate}
+
+\vspace{0.2em}
+\begin{figure}
+\centering
+\includegraphics[width=0.78\textwidth]{../figures/exp01_linear_sweep_n.png}
+\end{figure}
+
+\vfill
+\textit{Две шкалы по $n$ при $m=256$: $\mu_f$ растёт примерно линейно, $\hat{\mathfrak{R}}_m$ --- как $\sqrt{n}$. На слайде --- контраст роста двух мер при одной линейной модели.}
+\end{frame}
+
+%----------------------------------------------------------------------------------------------------------
+\begin{frame}[t]{Линейная модель, размер выборки $m$}
+\justifying
+\vspace{-0.3em}
+$n=64$, геометрическая сетка $m\in[16,1024]$, $W=2$, 16 повторов.
+
+\vspace{0.25em}
+\begin{columns}[T,onlytextwidth]
+\begin{column}{0.49\textwidth}
+\centering
+\includegraphics[width=\linewidth]{../figures/exp02_linear_sweep_m_mu.png}
+\end{column}
+\begin{column}{0.49\textwidth}
+\centering
+\includegraphics[width=\linewidth]{../figures/exp02_linear_sweep_m_rademacher.png}
+\end{column}
+\end{columns}
+
+\vfill
+\textit{При росте $m$ и фиксированном $n=64$: $\mu_f$ почти не меняется, так как ограничена $\max_i\|\mathbf{x}_i\|_2^2$, а $\hat{\mathfrak{R}}_m$ на log--log убывает как $m^{-1/2}$. Две меры по-разному реагируют на размер выборки.}
+\end{frame}
+
+%----------------------------------------------------------------------------------------------------------
+\begin{frame}[t]{Двухслойная FC ReLU, ширина $h$}
+\justifying
+\vspace{-0.3em}
+\begin{enumerate}[1)]
+    \item $n=h$, $m=512$, $|w_{ij}|\le M=1$, оценка в $\boldsymbol{\theta}^\star$, без шума в метках.
+    \item $\mu_f$ --- батчевые поэкземплярные Гессианы, $\hat{\mathfrak{R}}_m$ --- PGD на шаре по весам.
+    \item На графике эталоны $\propto(hM)^4$ и $\propto h^3$.
+\end{enumerate}
+
+\vspace{0.15em}
+\begin{figure}
+\centering
+\includegraphics[width=0.78\textwidth]{../figures/exp03_twolayer_sweep_h.png}
+\end{figure}
+
+\vfill
+\textit{По $h$ при $n=h$: эмпирическая $\mu_f$ ближе к кривой $h^3$, чем к наихудшей $(hM)^4$. $\hat{\mathfrak{R}}_m$ на правой оси растёт по $h$ заметно мягче, чем $\mu_f$.}
+\end{frame}
+
+%----------------------------------------------------------------------------------------------------------
+\begin{frame}{Выводы}
+\justifying
+\begin{enumerate}
+    \item Предложена ландшафтная мера сложности $\mu_f$~--- спектральная дисперсия поэкземплярных Гессианов для скалярной регрессии FC ReLU при MSE.
+    \item Получены законы масштабирования $\mu_f$ по глубине $L$, ширине $h$ и нормам весов; для MSE внешний множитель Гессиана потери равен~1.
+    \item Показано, что $\mu_f$ и $\hat{\mathfrak{R}}_m$ \textbf{дополняют}, а не дублируют друг друга: локальная кривизна vs.\ глобальная емкость класса.
+    \item Численные эксперименты согласуются с теорией: $O(n)$ vs.\ $O(\sqrt{n})$ для линейной модели; $h^4$ vs.\ $\mathrm{poly}(h)/\sqrt{m}$ для двух слоев.
+\end{enumerate}
+\end{frame}
+
 %----------------------------------------------------------------------------------------------------------
 \end{document}
