@@ -1,0 +1,86 @@
+\documentclass[10pt,pdf,hyperref={unicode}]{beamer}
+
+\mode<presentation>
+{
+\usetheme{boxes}
+\beamertemplatenavigationsymbolsempty
+
+\setbeamertemplate{footline}[page number]
+\setbeamersize{text margin left=1em, text margin right=1em}
+}
+
+\usepackage[T2A]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[english, russian]{babel}
+\usepackage{bm}
+\usepackage{multirow}
+\usepackage{ragged2e}
+\usepackage{indentfirst}
+\usepackage{multicol}
+\usepackage{subfig}
+\usepackage{amsmath,amssymb}
+\usepackage{enumerate}
+\usepackage{mathtools}
+\usepackage{comment}
+\usepackage{multicol}
+\usepackage{color}
+\definecolor{python-green}{RGB}{55,126,33}
+
+\usepackage[all]{xy}
+
+\usepackage{tikz}
+\usetikzlibrary{positioning,arrows}
+
+\usepackage{caption}
+\captionsetup{skip=0pt,belowskip=0pt}
+
+\newtheorem{rustheorem}{Теорема}
+\newtheorem{rusdefinition}{Определение}
+\newtheorem{rusassumption}{Предположение}
+\newtheorem{rusremark}{Замечание}
+\newtheorem{ruscorollary}{Следствие}
+
+
+% colors
+\definecolor{darkgreen}{rgb}{0.0, 0.2, 0.13}
+\definecolor{darkcyan}{rgb}{0.0, 0.55, 0.55}
+
+\AtBeginEnvironment{figure}{\setcounter{subfigure}{0}}%
+
+%----------------------------------------------------------------------------------------------------------
+
+\title[]{%
+О показателе ландшафтной сложности для полносвязных сетей ReLU при квадратичной функции потерь}
+
+\author{%
+    Андрей Грабовой}
+    
+\institute[ИПУ РАН]{%
+Институт Проблем Управления РАН им. Трапезникова\\
+grabovoy@ipu.ru}
+
+\date{29.05.2026}%Place If need date hear
+
+%---------------------------------------------------------------------------------------------------------
+\begin{document}
+
+\begin{frame}
+\titlepage
+\end{frame}
+
+%----------------------------------------------------------------------------------------------------------
+\begin{frame}{Мера сложности ландшафта для полносвязных ReLU сетей}
+\bigskip
+Исследуется связь между локальной геометрией функции потерь и классическими мерами ёмкости в задачах регрессии.
+\begin{block}{Задача}
+Анализ ландшафта функции потерь и его соотношения с равномерной сложностью для скалярной регрессии полносвязных ReLU сетей при квадратичной ошибке.
+\end{block}
+\begin{block}{Цель}
+Разработать меру сложности ландшафта (Landscape Complexity Measure), отражающую локальную вариативность Гессиана вокруг эмпирического среднего, и исследовать её масштабирование.
+\end{block}
+\begin{block}{Метод}
+Определение меры через спектральную дисперсию поэкземплярных Гессианов; вывод законов масштабирования по глубине, ширине и ограничениям нормы; теоретическое сравнение с эмпирической сложностью Радемахера; численная верификация.
+\end{block}
+\end{frame}
+%----------------------------------------------------------------------------------------------------------
+\end{document}
